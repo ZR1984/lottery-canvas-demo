@@ -6,19 +6,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #canvas{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 
 <body>
     <canvas id="canvas">很抱歉，您的浏览器不支持canvas！</canvas>
     <script>
         let canvas = document.querySelector('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         let ctx = canvas.getContext('2d');
         let bgImage = new Image();
         bgImage.src = './image/1.png';
-        canvas.width = bgImage.width;
-        canvas.height = bgImage.height;
+        // console.log(bgImage.width,bgImage.height);
         bgImage.onload = function () {
-            ctx.drawImage(bgImage, 0, 0);
+            ctx.drawImage(bgImage, 0, 0,ctx.canvas.width,ctx.canvas.height);
         }
     </script>
 </body>
