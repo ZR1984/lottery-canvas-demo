@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+
 <body>
-    <canvas id="canvas">的发送到发送到对方</canvas>
+    <canvas id="canvas">很抱歉，您的浏览器不支持canvas！</canvas>
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
-        ctx.fillStyle="red";
-        ctx.fillRect(20,20,100,200);
+        let bgImage = new Image();
+        bgImage.src = './image/1.png';
+        canvas.width = bgImage.width;
+        canvas.height = bgImage.height;
+        // console.log(bgImage.width,bgImage.height);
+        bgImage.onload = function () {
+            ctx.drawImage(bgImage, 0, 0);
+        }
     </script>
 </body>
+
 </html>
