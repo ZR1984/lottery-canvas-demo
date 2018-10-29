@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1124" height="708">很抱歉，您的浏览器不支持canvas！</canvas>
+    <script>
+        let canvas = document.querySelector('canvas');
+        let ctx = canvas.getContext('2d');
+        let imageUrl = ['./image/期数/0.png', './image/期数/1.png', './image/期数/2.png', './image/期数/3.png']
+        let imageInfo = [{
+                name: "0",
+                url: "./image/期数/0.png",
+                position: [300, 50]
+            },
+            {
+                name: "1",
+                url: "./image/期数/1.png",
+                position: [310, 50]
+            },
+            {
+                name: "2",
+                url: "./image/期数/2.png",
+                position: [320, 50]
+            },
+            {
+                name: "3",
+                url: "./image/期数/3.png",
+                position: [330, 50]
+            }
+        ]
+
+        window.onload = function () {
+            drawImageFuc(imageInfo)
+        }
+
+        //生成图片
+        function newImageFuc(imgInfos) {
+            let newImageArr = [];
+            imgInfos.forEach(el => {
+
+                const p = new Promise(function (resolve, reject) {
+                    let obj = new Image();
+                    obj.src = el.url;
+                    obj.onload = () => {
+                        el.img = obj;
+                        resolve(el);
+                    }
+                })
+
+                newImageArr.push(p)
+            });
+            return newImageArr;
+        }
+
+
+        // canvas绘制图片
+        function drawImageFuc(imgInfos) {
+            let newImageArr = newImageFuc(imgInfos);
+            newImageArr.forEach(el => {
+                el.then(imgInfo => {
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1]);
+
+                })
+            });
+        };
+    </script>
+</body>
+
+</html>
