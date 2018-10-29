@@ -13,30 +13,26 @@
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
-        let imageUrl = ['./image/期数/0.png', './image/期数/1.png', './image/期数/2.png', './image/期数/3.png']
-        let imageInfo = [{
-                name: "0",
-                url: "./image/期数/0.png",
-                position: [300, 50]
-            },
-            {
-                name: "1",
-                url: "./image/期数/1.png",
-                position: [310, 50]
-            },
-            {
-                name: "2",
-                url: "./image/期数/2.png",
-                position: [320, 50]
-            },
-            {
-                name: "3",
-                url: "./image/期数/3.png",
-                position: [330, 50]
-            }
-        ]
 
         window.onload = function () {
+            drawPeriods("20181101008")
+        }
+
+        //绘制期数 num = "123"
+        function drawPeriods(num){
+            const x = 220;
+            const y = 50;
+            const imgWidth = 25;
+            const numArr = num.split('');
+            const imageInfo = [];
+            numArr.forEach((num,index) => {
+                imageInfo.push({
+                    name: num,
+                    url: `./image/期数/${num}.png`,
+                    position: [x + index * imgWidth, y]    
+                })
+            })
+
             drawImageFuc(imageInfo)
         }
 
