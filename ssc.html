@@ -9,45 +9,36 @@
 </head>
 
 <body>
-    <canvas id="canvas">很抱歉，您的浏览器不支持canvas！</canvas>
+    <canvas id="canvas" width="1124" height="708">很抱歉，您的浏览器不支持canvas！</canvas>
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
+        let imageUrl = ['./image/期数/0.png','./image/期数/1.png','./image/期数/2.png','./image/期数/3.png']
 
-        // 背景图
-        let bgImage = new Image();
-        bgImage.src = './image/1.png';
-
-        //期数文字：第
-        let periodsTextDi = new Image();
-        periodsTextDi.src = './image/左上文字/第.png'
-
-        //期数文字：期
-        let periodsTextQi = new Image();
-        periodsTextQi.src = './image/左上文字/期.png'
-
-        //下期文字：下
-        let nextPeriodsXia = new Image();
-        nextPeriodsXia.src = './image/下.png'
-
-        //下期文字：期
-        let nextPeriodsQi = new Image();
-        nextPeriodsQi.src = './image/期.png'
-
-        //下期文字：:
-        let nextPeriodsDian = new Image();//冒号
-        nextPeriodsDian.src = './image/开奖时间/点.png'
-
-        bgImage.onload = function () {
-            canvas.width = bgImage.width;
-            canvas.height = bgImage.height;
-            ctx.drawImage(bgImage, 0, 0);
-            ctx.drawImage(periodsTextDi, 190, 10);
-            ctx.drawImage(periodsTextQi, 390, 8);
-            ctx.drawImage(nextPeriodsXia, 840, 2);
-            ctx.drawImage(nextPeriodsQi, 865, 3);
-            ctx.drawImage(nextPeriodsDian, 890, 8);
+        window.onload = function () {
+            drawImageFuc(imageUrl,300,50)
         }
+
+        //生成图片
+        function newImageFuc(url) {
+            let newImageArr = [];
+            let len = url.length;
+            url.forEach(el => {
+                let obj = new Image();
+                obj.src = el;
+                newImageArr.push(obj);
+            });
+            return newImageArr;
+        }
+
+
+        // canvas绘制图片
+        function drawImageFuc(url, x, y) {
+            let newImageArr = newImageFuc(url);
+            newImageArr.forEach(el => {
+                ctx.drawImage(el, x, y);
+            });
+        };
     </script>
 </body>
 
