@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="canvas" width="1124" height="708">很抱歉，您的浏览器不支持canvas！</canvas>
+    <script>
+        let canvas = document.querySelector('canvas');
+        let ctx = canvas.getContext('2d');
+        let imageUrl = ['./image/期数/0.png', './image/期数/1.png'];
+
+        // let obj = new Image();
+        // obj.src = './image/1_new.png';
+        window.onload = function () {
+
+            newImageFuc(imageUrl, 0, 0);
+            // ctx.drawImage(obj, 0, 0);
+        }
+
+        //生成图片
+        function newImageFuc(url, x, y) {
+            // let newImageArr = [];
+            // let len = url.length;
+            url.forEach(el => {
+                // console.log(typeof el);
+                let obj = new Image();
+                obj.src = el;
+                // console.log(el);
+                ctx.drawImage(obj, x, y);
+                // newImageArr.push(obj);
+            });
+            // return newImageArr;
+        }
+
+
+        // canvas绘制图片
+        // function drawImageFuc(url, x, y) {
+        //     let newImageArr = newImageFuc(url);
+        //     newImageArr.forEach(el => {
+        //         console.log(el);
+        //         ctx.drawImage(el, x, y);
+        //     });
+        // };
+    </script>
+</body>
+
+</html>
