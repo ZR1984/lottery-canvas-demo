@@ -13,23 +13,35 @@
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
-
+        let bgImg = [{
+            name: "0",
+            url: "./image/1_new.png",
+            position: [0, 0]
+        }];
         window.onload = function () {
+            drawImageFuc(bgImg)
             drawPeriods("20181101008")
         }
 
         //绘制期数 num = "123"
-        function drawPeriods(num){
-            const x = 220;
-            const y = 50;
-            const imgWidth = 25;
+        function drawPeriods(num, opts={}){
+            const {
+                x = 225,            //期数的初始位置 x 方向的值
+                y = 18,             //期数的初始位置 y 方向的值
+                step = 15,          //每个数字的间隔
+                imgWidth = 30,      //数字图片绘制的宽度
+                imgHeight = 30,     //数字图片绘制的高度
+            } = opts;
+
             const numArr = num.split('');
             const imageInfo = [];
             numArr.forEach((num,index) => {
                 imageInfo.push({
                     name: num,
                     url: `./image/期数/${num}.png`,
-                    position: [x + index * imgWidth, y]    
+                    position: [x + index * step, y],
+                    width: imgWidth,
+                    height: imgHeight
                 })
             })
 
@@ -61,7 +73,7 @@
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
                 el.then(imgInfo => {
-                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1]);
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width || imgInfo.img.width, imgInfo.height || imgInfo.img.height);
                 })
             });
         };
