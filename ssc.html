@@ -13,40 +13,225 @@
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
-        let imageUrl = ['./image/期数/0.png', './image/期数/1.png'];
+        // 背景图
+        let bgUrl = [{
+            name: "0",
+            url: "./image/1_new.png",
+            position: [0, 0]
+        }];
+        //当前期数
+        let nowPeriods = [{
+                name: "0",
+                url: "./image/期数/0.png",
+                position: [220, 15]
+            },
+            {
+                name: "1",
+                url: "./image/期数/1.png",
+                position: [235, 15]
+            },
+            {
+                name: "2",
+                url: "./image/期数/2.png",
+                position: [250, 15]
+            },
+            {
+                name: "3",
+                url: "./image/期数/3.png",
+                position: [265, 15]
+            },
+            {
+                name: "4",
+                url: "./image/期数/4.png",
+                position: [280, 15]
+            },
+            {
+                name: "5",
+                url: "./image/期数/5.png",
+                position: [295, 15]
+            },
+            {
+                name: "6",
+                url: "./image/期数/6.png",
+                position: [310, 15]
+            },
+            {
+                name: "7",
+                url: "./image/期数/7.png",
+                position: [325, 15]
+            },
+            {
+                name: "8",
+                url: "./image/期数/8.png",
+                position: [340, 15]
+            },
+            {
+                name: "9",
+                url: "./image/期数/9.png",
+                position: [355, 15]
+            }
+            // ,
+            // {
+            //     name: "10",
+            //     url: "./image/期数/0.png",
+            //     position: [330, 50]
+            // }
+        ];
+        //下期期数
+        let nextPeriods = [{
+                name: "0",
+                url: "./image/开奖时间/0.png",
+                position: [905, 8]
+            },
+            {
+                name: "1",
+                url: "./image/开奖时间/1.png",
+                position: [920, 8]
+            },
+            {
+                name: "2",
+                url: "./image/开奖时间/2.png",
+                position: [935, 8]
+            },
+            {
+                name: "3",
+                url: "./image/开奖时间/3.png",
+                position: [950, 8]
+            },
+            {
+                name: "4",
+                url: "./image/开奖时间/4.png",
+                position: [965, 8]
+            },
+            {
+                name: "5",
+                url: "./image/开奖时间/5.png",
+                position: [980, 8]
+            },
+            {
+                name: "6",
+                url: "./image/开奖时间/6.png",
+                position: [995, 8]
+            },
+            {
+                name: "7",
+                url: "./image/开奖时间/7.png",
+                position: [1010, 8]
+            },
+            {
+                name: "8",
+                url: "./image/开奖时间/8.png",
+                position: [1025, 8]
+            },
+            {
+                name: "9",
+                url: "./image/开奖时间/9.png",
+                position: [1040, 8]
+            }
+            // ,
+            // {
+            //     name: "10",
+            //     url: "./image/期数/0.png",
+            //     position: [330, 50]
+            // }
+        ];
 
-        // let obj = new Image();
-        // obj.src = './image/1_new.png';
+        //开奖时间
+        let lotteryTime = [{
+                name: "0",
+                url: "./image/开奖时间/0.png",
+                position: [905, 8]
+            },
+            {
+                name: "1",
+                url: "./image/开奖时间/1.png",
+                position: [920, 8]
+            },
+            {
+                name: "2",
+                url: "./image/开奖时间/2.png",
+                position: [935, 8]
+            },
+            {
+                name: "3",
+                url: "./image/开奖时间/3.png",
+                position: [950, 8]
+            },
+            {
+                name: "4",
+                url: "./image/开奖时间/4.png",
+                position: [965, 8]
+            },
+            {
+                name: "5",
+                url: "./image/开奖时间/5.png",
+                position: [980, 8]
+            },
+            {
+                name: "6",
+                url: "./image/开奖时间/6.png",
+                position: [995, 8]
+            },
+            {
+                name: "7",
+                url: "./image/开奖时间/7.png",
+                position: [1010, 8]
+            },
+            {
+                name: "8",
+                url: "./image/开奖时间/8.png",
+                position: [1025, 8]
+            },
+            {
+                name: "9",
+                url: "./image/开奖时间/9.png",
+                position: [1040, 8]
+            }
+            // ,
+            // {
+            //     name: "10",
+            //     url: "./image/期数/0.png",
+            //     position: [330, 50]
+            // }
+        ];
+
+
         window.onload = function () {
-
-            newImageFuc(imageUrl, 0, 0);
-            // ctx.drawImage(obj, 0, 0);
+            drawImageFuc(bgUrl)//绘制背景
+            drawImageFuc(nowPeriods)//绘制当前期数
+            drawImageFuc(nextPeriods)//绘制下次期数
+            drawImageFuc(lotteryTime)//绘制开奖时间
         }
 
         //生成图片
-        function newImageFuc(url, x, y) {
-            // let newImageArr = [];
-            // let len = url.length;
-            url.forEach(el => {
-                // console.log(typeof el);
-                let obj = new Image();
-                obj.src = el;
-                // console.log(el);
-                ctx.drawImage(obj, x, y);
-                // newImageArr.push(obj);
+        function newImageFuc(imgInfos) {
+            let newImageArr = [];
+            imgInfos.forEach(el => {
+
+                const p = new Promise(function (resolve, reject) {
+                    let obj = new Image();
+                    obj.src = el.url;
+                    obj.onload = () => {
+                        el.img = obj;
+                        resolve(el);
+                    }
+                })
+
+                newImageArr.push(p)
             });
-            // return newImageArr;
+            return newImageArr;
         }
 
 
         // canvas绘制图片
-        // function drawImageFuc(url, x, y) {
-        //     let newImageArr = newImageFuc(url);
-        //     newImageArr.forEach(el => {
-        //         console.log(el);
-        //         ctx.drawImage(el, x, y);
-        //     });
-        // };
+        function drawImageFuc(imgInfos) {
+            let newImageArr = newImageFuc(imgInfos);
+            newImageArr.forEach(el => {
+                el.then(imgInfo => {
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1]);
+                })
+            });
+        };
     </script>
 </body>
 
