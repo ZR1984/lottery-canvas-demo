@@ -12,13 +12,15 @@
     <canvas id="canvas" width="1124" height="708">很抱歉，您的浏览器不支持canvas！</canvas>
     <script>
         let canvas = document.querySelector('canvas');
+        canvas.style.background = 'url(./image/1_new.png) no-repeat center center';
+        canvas.style.backgroundSize = '100% 100%';
         let ctx = canvas.getContext('2d');
         let bgImg = [{
             name: "0",
             url: "./image/1_new.png",
             position: [0, 0]
         }];
-        let countDownNum = '235';
+        let countDownNum = '15';
         window.onload = function () {
             drawImageFuc(bgImg, () => {
                 drawPeriods("20181101008") //当前期数
@@ -44,7 +46,7 @@
                     step: 35,
                     imgWidth: 60,
                     imgHeight: 60
-                },0,true)
+                }, 0, true)
 
                 for (let i = 0; i < 5; i++) { //中间五列数字
                     drawPeriods('123456', {
@@ -59,23 +61,47 @@
         }
 
         var timer = setInterval(function () {
+            countDownNum = String(countDownNum);
             if (countDownNum == 0) {
                 clearInterval(timer);
+                ctx.clearRect(500, 100, 150, 60);
+            } else if (countDownNum.length == 2) {
+                ctx.clearRect(535, 100, 150, 60);
+                ctx.clearRect(500, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 515,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
+            } else if (countDownNum.length == 3) {
+                ctx.clearRect(500, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 500,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
+            } else if (countDownNum.length == 1) {
+                ctx.clearRect(515, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 530,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
             }
-            countDownNum--;
-            ctx.clearRect(500, 100, 150, 60);
-            drawPeriods(countDownNum, { //倒计时数字
-                x: 500,
-                y: 100,
-                step: 35,
-                imgWidth: 60,
-                imgHeight: 60
-            },0,true)
         }, 1000);
 
 
         //绘制期数 num = "123"
-        function drawPeriods(numStr, opts = {}, direction = 0,isCountDown = false) {
+        function drawPeriods(numStr, opts = {}, direction = 0, isCountDown = false) {
             const {
                 x = 225, //期数的初始位置 x 方向的值
                     y = 18, //期数的初始位置 y 方向的值
@@ -150,7 +176,8 @@
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
                 el.then((imgInfo, callack) => {
-                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width ||
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1],
+                        imgInfo.width ||
                         imgInfo.img.width, imgInfo.height || imgInfo.img.height);
                     if (callback) callback()
                 })
