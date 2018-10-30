@@ -13,194 +13,50 @@
     <script>
         let canvas = document.querySelector('canvas');
         let ctx = canvas.getContext('2d');
-        // 背景图
-        let bgUrl = [{
+        let bgImg = [{
             name: "0",
             url: "./image/1_new.png",
             position: [0, 0]
         }];
-        //当前期数
-        let nowPeriods = [{
-                name: "0",
-                url: "./image/期数/0.png",
-                position: [220, 15]
-            },
-            {
-                name: "1",
-                url: "./image/期数/1.png",
-                position: [235, 15]
-            },
-            {
-                name: "2",
-                url: "./image/期数/2.png",
-                position: [250, 15]
-            },
-            {
-                name: "3",
-                url: "./image/期数/3.png",
-                position: [265, 15]
-            },
-            {
-                name: "4",
-                url: "./image/期数/4.png",
-                position: [280, 15]
-            },
-            {
-                name: "5",
-                url: "./image/期数/5.png",
-                position: [295, 15]
-            },
-            {
-                name: "6",
-                url: "./image/期数/6.png",
-                position: [310, 15]
-            },
-            {
-                name: "7",
-                url: "./image/期数/7.png",
-                position: [325, 15]
-            },
-            {
-                name: "8",
-                url: "./image/期数/8.png",
-                position: [340, 15]
-            },
-            {
-                name: "9",
-                url: "./image/期数/9.png",
-                position: [355, 15]
-            }
-            // ,
-            // {
-            //     name: "10",
-            //     url: "./image/期数/0.png",
-            //     position: [330, 50]
-            // }
-        ];
-        //下期期数
-        let nextPeriods = [{
-                name: "0",
-                url: "./image/开奖时间/0.png",
-                position: [905, 8]
-            },
-            {
-                name: "1",
-                url: "./image/开奖时间/1.png",
-                position: [920, 8]
-            },
-            {
-                name: "2",
-                url: "./image/开奖时间/2.png",
-                position: [935, 8]
-            },
-            {
-                name: "3",
-                url: "./image/开奖时间/3.png",
-                position: [950, 8]
-            },
-            {
-                name: "4",
-                url: "./image/开奖时间/4.png",
-                position: [965, 8]
-            },
-            {
-                name: "5",
-                url: "./image/开奖时间/5.png",
-                position: [980, 8]
-            },
-            {
-                name: "6",
-                url: "./image/开奖时间/6.png",
-                position: [995, 8]
-            },
-            {
-                name: "7",
-                url: "./image/开奖时间/7.png",
-                position: [1010, 8]
-            },
-            {
-                name: "8",
-                url: "./image/开奖时间/8.png",
-                position: [1025, 8]
-            },
-            {
-                name: "9",
-                url: "./image/开奖时间/9.png",
-                position: [1040, 8]
-            }
-            // ,
-            // {
-            //     name: "10",
-            //     url: "./image/期数/0.png",
-            //     position: [330, 50]
-            // }
-        ];
-
-        //开奖时间
-        let lotteryTime = [{
-                name: "0",
-                url: "./image/开奖时间/0.png",
-                position: [905, 8]
-            },
-            {
-                name: "1",
-                url: "./image/开奖时间/1.png",
-                position: [920, 8]
-            },
-            {
-                name: "2",
-                url: "./image/开奖时间/2.png",
-                position: [935, 8]
-            },
-            {
-                name: "3",
-                url: "./image/开奖时间/3.png",
-                position: [950, 8]
-            },
-            {
-                name: "4",
-                url: "./image/开奖时间/4.png",
-                position: [965, 8]
-            },
-            {
-                name: "5",
-                url: "./image/开奖时间/5.png",
-                position: [980, 8]
-            },
-            {
-                name: "6",
-                url: "./image/开奖时间/6.png",
-                position: [995, 8]
-            },
-            {
-                name: "7",
-                url: "./image/开奖时间/7.png",
-                position: [1010, 8]
-            },
-            {
-                name: "8",
-                url: "./image/开奖时间/8.png",
-                position: [1025, 8]
-            },
-            {
-                name: "9",
-                url: "./image/开奖时间/9.png",
-                position: [1040, 8]
-            }
-            // ,
-            // {
-            //     name: "10",
-            //     url: "./image/期数/0.png",
-            //     position: [330, 50]
-            // }
-        ];
-
-
         window.onload = function () {
-            drawImageFuc(bgUrl)//绘制背景
-            drawImageFuc(nowPeriods)//绘制当前期数
-            drawImageFuc(nextPeriods)//绘制下次期数
-            drawImageFuc(lotteryTime)//绘制开奖时间
+            drawImageFuc(bgImg)
+            drawPeriods("20181101008",'期数')//当前期数
+            drawPeriods("20181101008",'期数',{//下期期数
+                x: 910,
+                y: 10
+            })
+            drawPeriods('25879','上中奖号码',{
+                x:450,
+                y:5,
+                step:75,
+                imgWidth:80,
+                imgHeight:80
+            })
+        }
+
+        //绘制期数 num = "123"
+        function drawPeriods(num,url, opts={}){
+            const {
+                x = 225,            //期数的初始位置 x 方向的值
+                y = 18,             //期数的初始位置 y 方向的值
+                step = 15,          //每个数字的间隔
+                imgWidth = 30,      //数字图片绘制的宽度
+                imgHeight = 30,     //数字图片绘制的高度
+            } = opts;
+
+            const numArr = num.split('');
+            const imageInfo = [];
+            numArr.forEach((num,index) => {
+                imageInfo.push({
+                    name: num,
+                    url: `./image/${url}/${num}.png`,
+                    position: [x + index * step, y],
+                    width: imgWidth,
+                    height: imgHeight
+                })
+            })
+
+            drawImageFuc(imageInfo)
         }
 
         //生成图片
@@ -228,7 +84,7 @@
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
                 el.then(imgInfo => {
-                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1]);
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width || imgInfo.img.width, imgInfo.height || imgInfo.img.height);
                 })
             });
         };
