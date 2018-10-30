@@ -19,41 +19,71 @@
             position: [0, 0]
         }];
         window.onload = function () {
-            drawImageFuc(bgImg)
-            drawPeriods("20181101008",'期数')//当前期数
-            drawPeriods("20181101008",'期数',{//下期期数
-                x: 910,
-                y: 10
-            })
-            drawPeriods('25879','上中奖号码',{
-                x:450,
-                y:5,
-                step:75,
-                imgWidth:80,
-                imgHeight:80
+            drawImageFuc(bgImg, () => {
+                drawPeriods("20181101008") //当前期数
+                drawPeriods("20181101008", { //下期期数
+                    x: 910,
+                    y: 10
+                })
+                drawPeriods('25879', {//顶部中奖号码
+                    x: 450,
+                    y: 5,
+                    step: 75,
+                    imgWidth: 80,
+                    imgHeight: 80
+                })
+                drawPeriods("14:10:00",{//开奖时间
+                    x: 950,
+                    y: 50,
+                    step: 13
+                })
+                drawPeriods('235', {//倒计时数字
+                    x: 500,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                })
             })
         }
 
         //绘制期数 num = "123"
-        function drawPeriods(num,url, opts={}){
+        function drawPeriods(numStr, opts = {}) {
             const {
-                x = 225,            //期数的初始位置 x 方向的值
-                y = 18,             //期数的初始位置 y 方向的值
-                step = 15,          //每个数字的间隔
-                imgWidth = 30,      //数字图片绘制的宽度
-                imgHeight = 30,     //数字图片绘制的高度
+                x = 225, //期数的初始位置 x 方向的值
+                    y = 18, //期数的初始位置 y 方向的值
+                    step = 15, //每个数字的间隔
+                    imgWidth = 30, //数字图片绘制的宽度
+                    imgHeight = 30, //数字图片绘制的高度
             } = opts;
 
-            const numArr = num.split('');
+            const numArr = numStr.split('');
             const imageInfo = [];
-            numArr.forEach((num,index) => {
-                imageInfo.push({
+            numArr.forEach((num, index) => {
+                const info = {
                     name: num,
-                    url: `./image/${url}/${num}.png`,
+                    url: `./image/periods/${num}.png`,
                     position: [x + index * step, y],
                     width: imgWidth,
                     height: imgHeight
-                })
+                }
+
+                if (numStr.indexOf(':') !== -1 || numStr.indexOf('：') !== -1) {
+                    info.url = `./image/lottery-time/${num}.png`
+                    if (num == "：" || num == ":") {
+                        info.url = `./image/lottery-time/a.png`
+                    }
+                }
+
+                if(numStr.length == 5){
+                    info.url = `./image/top-middle/${num}.png`
+                }
+
+                if(numStr.length == 3){
+                    info.url = `./image/count-down/${num}.png`
+                }
+
+                imageInfo.push(info)
             })
 
             drawImageFuc(imageInfo)
@@ -80,11 +110,13 @@
 
 
         // canvas绘制图片
-        function drawImageFuc(imgInfos) {
+        function drawImageFuc(imgInfos, callback) {
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
                 el.then(imgInfo => {
-                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width || imgInfo.img.width, imgInfo.height || imgInfo.img.height);
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width ||
+                        imgInfo.img.width, imgInfo.height || imgInfo.img.height);
+                    callback()
                 })
             });
         };
