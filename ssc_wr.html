@@ -19,16 +19,23 @@
             position: [0, 0]
         }];
         window.onload = function () {
-            drawImageFuc(bgImg)
-            drawPeriods("20181101008")
-            drawPeriods("20181101008",{
-                x: 910,
-                y: 10
+            drawImageFuc(bgImg, () => {
+
+                drawPeriods("20181101008")
+                drawPeriods("20181101008",{
+                    x: 910,
+                    y: 10
+                })
+                drawPeriods("14:10:00",{
+                    x: 950,
+                    y: 50,
+                    step: 13
+                })
             })
         }
 
         //绘制期数 num = "123"
-        function drawPeriods(num, opts={}){
+        function drawPeriods(numStr, opts={}){
             const {
                 x = 225,            //期数的初始位置 x 方向的值
                 y = 18,             //期数的初始位置 y 方向的值
@@ -37,16 +44,26 @@
                 imgHeight = 30,     //数字图片绘制的高度
             } = opts;
 
-            const numArr = num.split('');
+            const numArr = numStr.split('');
             const imageInfo = [];
             numArr.forEach((num,index) => {
-                imageInfo.push({
+                const info = {
                     name: num,
                     url: `./image/期数/${num}.png`,
                     position: [x + index * step, y],
                     width: imgWidth,
                     height: imgHeight
-                })
+                }
+                
+                if(numStr.indexOf(':') !== -1 || numStr.indexOf('：') !== -1){
+
+                    info.url = `./image/开奖时间/${num}.png`
+                    if(num == "：" || num == ":"){
+                        info.url = `./image/开奖时间/a.png`
+                    }
+                }
+
+                imageInfo.push(info)
             })
 
             drawImageFuc(imageInfo)
@@ -73,11 +90,12 @@
 
 
         // canvas绘制图片
-        function drawImageFuc(imgInfos) {
+        function drawImageFuc(imgInfos, callback) {
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
                 el.then(imgInfo => {
                     ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width || imgInfo.img.width, imgInfo.height || imgInfo.img.height);
+                    callback()
                 })
             });
         };
