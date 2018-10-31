@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./lib/TweenMax.min.js"></script>
+    <script src="./test.js"></script>
+    <style>
+        body{
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        var a =  new LotteryTool('body',{
+            numStr: "0123456789",
+            numDirection: 'vertical',
+            numPosition: {x: 0, y: 0},
+            numStep: 100,
+            numImgWidth: 100,
+            numImgHeight: 100,
+            isRoll: true
+        })
+    
+        roll()
+        function roll(){
+            // const temp = {y:0}
+            // TweenMax.to(temp,3,{
+            //     y: -900,
+            //     onUpdate: (val)=>{
+            //         a.imageNumberInfos.forEach(numInfo => {
+            //             numInfo.position[1] -= val;
+            //         })
+            //     }
+            // })
+            a.drawImage()
+            requestAnimationFrame(roll)
+        }
+
+        setTimeout(() => {
+            a.setWinner()
+        }, 3000);
+    </script>
+</body>
+</html>
