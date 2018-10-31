@@ -30,7 +30,8 @@ function LotteryTool(parent, opts = {}) {
             numImgWidth = null,
             numImgHeight = null,
             numStep = 15,
-            isRoll = false
+            isRoll = false,
+            rollDirection = 'down'
     } = opts;
 
     this.numStr = numStr;
@@ -48,6 +49,7 @@ function LotteryTool(parent, opts = {}) {
     this.numStep = numStep;
     this.numType = 'middle'
     this.isRoll = isRoll;
+    this.rollDirection = rollDirection;
     this.canvasContext = this.canvas.getContext('2d');
 
     const len = this.numArr.length;
@@ -75,7 +77,7 @@ LotteryTool.prototype.setWinner = function () {
     numObjArr.forEach(numObj => {
         if (Object.is(numObj.name, '0')) {
             numObj.win()
-        } 
+        }
     });
 }
 
@@ -103,6 +105,7 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
         sumHeight,
         imgLoadPromise,
         isRoll,
+        rollDirection
     } = this;
 
     const x = numPosition.x;
@@ -121,6 +124,7 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
             canvasContext,
             sumHeight,
             isRoll,
+            rollDirection
         })
 
         //纵向绘制图片
@@ -138,24 +142,19 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
         map.set(numObj.name, numObj)
     })
 
-    numArr.forEach((num,index) => {
+    numArr.forEach((num, index) => {
         const numObjClone = new Num({
             name: num + '-clone',
             imgUrl: `./image/${numType}/${num}.png`,
             x: x,
-            y: y + index * numStep + sumHeight,
+            y: Object.is(rollDirection,'up')?y + index * numStep + sumHeight:y + index * numStep - sumHeight,
             width: numImgWidth,
             height: numImgHeight,
             canvasContext,
             sumHeight,
             isRoll,
+            rollDirection
         })
-
-        //纵向绘制图片
-        if (numDirection == 'horizontal') {
-            numObjClone.x = x + index * numStep + sumHeight;
-            numObjClone.y = y;
-        }
 
         if (num == "：" || num == ":") {
             numObjClone.imgUrl = `./image/${numType}/a.png`
@@ -166,7 +165,7 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
         map.set(numObjClone.name, numObjClone)
     })
 
-    numObjArr.forEach((numObj,i) => {
+    numObjArr.forEach((numObj, i) => {
         numObj.nextNum = map.get(numObj.nextNumName);
         numObj.prevNum = map.get(numObj.prevNumName);
     })
@@ -263,6 +262,7 @@ function Num(opts = {}) {
             sumHeight = 1000,
             isRoll = false,
             isRender = true,
+            rollDirection = 'down'
     } = opts;
 
     this.name = name;
@@ -278,7 +278,8 @@ function Num(opts = {}) {
     this.isRender = isRender;
     this.canvasContext = canvasContext;
     this.sumHeight = sumHeight;
-    this.target = this.originY - sumHeight;
+    this.rollDirection = rollDirection;
+    this.target = Object.is(rollDirection,'up')?this.originY - sumHeight:this.originY + sumHeight;
     this.nextNumName = Number(name) + 1 > 9 ? '0' : Number(name) + 1 + '';
     this.prevNumName = Number(name) - 1 < 0 ? '9' : Number(name) - 1 + '';
     this.nextNum = null;
@@ -286,7 +287,10 @@ function Num(opts = {}) {
 }
 
 Num.prototype.win = function () {
-    const { nextNum,prevNum} = this;
+    const {
+        nextNum,
+        prevNum
+    } = this;
     this.isRender = true;
     prevNum.isRender = true;
     nextNum.isRender = true;
@@ -301,10 +305,22 @@ Num.prototype.roll = function (rollSpeed = 10) {
     const {
         target,
         originY,
+        rollDirection
     } = this;
-    this.y -= rollSpeed;
-    if (this.y <= target) {
-        this.y = originY;
+
+    switch (rollDirection) {
+        case 'up':
+            this.y -= rollSpeed;
+            if (this.y <= target) {
+                this.y = originY;
+            }
+            break;
+        default:
+            this.y += rollSpeed;
+            if (this.y >= target) {
+                this.y = originY;
+            }
+            break;
     }
 }
 
