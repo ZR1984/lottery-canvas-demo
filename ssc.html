@@ -12,12 +12,15 @@
     <canvas id="canvas" width="1124" height="708">很抱歉，您的浏览器不支持canvas！</canvas>
     <script>
         let canvas = document.querySelector('canvas');
+        canvas.style.background = 'url(./image/1_new.png) no-repeat center center';
+        canvas.style.backgroundSize = '100% 100%';
         let ctx = canvas.getContext('2d');
         let bgImg = [{
             name: "0",
             url: "./image/1_new.png",
             position: [0, 0]
         }];
+        let countDownNum = '15';
         window.onload = function () {
             drawImageFuc(bgImg, () => {
                 drawPeriods("20181101008") //当前期数
@@ -25,40 +28,80 @@
                     x: 910,
                     y: 10
                 })
-                drawPeriods('25879', {//顶部中奖号码
+                drawPeriods('25879', { //顶部中奖号码
                     x: 450,
                     y: 5,
                     step: 75,
                     imgWidth: 80,
                     imgHeight: 80
                 })
-                drawPeriods("14:10:00",{//开奖时间
+                drawPeriods("14:10:00", { //开奖时间
                     x: 950,
                     y: 50,
                     step: 13
                 })
-                drawPeriods('235', {//倒计时数字
+                drawPeriods(countDownNum, { //倒计时数字
                     x: 500,
                     y: 100,
                     step: 35,
                     imgWidth: 60,
                     imgHeight: 60
-                })
+                }, 0, true)
 
-                for(let i = 0;i<5;i++){//中间五列数字
+                for (let i = 0; i < 5; i++) { //中间五列数字
                     drawPeriods('123456', {
-                    x: 170+(160*i),
-                    y: 170,
-                    step: 120,
-                    imgWidth: 100,
-                    imgHeight: 100
-                },1)
+                        x: 170 + (160 * i),
+                        y: 170,
+                        step: 120,
+                        imgWidth: 100,
+                        imgHeight: 100
+                    }, 1)
                 }
             })
         }
 
+        var timer = setInterval(function () {
+            countDownNum = String(countDownNum);
+            if (countDownNum == 0) {
+                clearInterval(timer);
+                ctx.clearRect(500, 100, 150, 60);
+            } else if (countDownNum.length == 2) {
+                ctx.clearRect(535, 100, 150, 60);
+                ctx.clearRect(500, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 515,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
+            } else if (countDownNum.length == 3) {
+                ctx.clearRect(500, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 500,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
+            } else if (countDownNum.length == 1) {
+                ctx.clearRect(515, 100, 150, 60);
+                drawPeriods(countDownNum, { //倒计时数字
+                    x: 530,
+                    y: 100,
+                    step: 35,
+                    imgWidth: 60,
+                    imgHeight: 60
+                }, 0, true)
+                countDownNum--;
+            }
+        }, 1000);
+
+
         //绘制期数 num = "123"
-        function drawPeriods(numStr, opts = {},direction = 0) {
+        function drawPeriods(numStr, opts = {}, direction = 0, isCountDown = false) {
             const {
                 x = 225, //期数的初始位置 x 方向的值
                     y = 18, //期数的初始位置 y 方向的值
@@ -66,7 +109,7 @@
                     imgWidth = 30, //数字图片绘制的宽度
                     imgHeight = 30, //数字图片绘制的高度
             } = opts;
-
+            numStr = String(numStr);
             const numArr = numStr.split('');
             const imageInfo = [];
             numArr.forEach((num, index) => {
@@ -79,7 +122,7 @@
                 }
 
                 //纵向绘制图片
-                if(direction == 1){
+                if (direction == 1) {
                     info.position = [x, y + index * step];
                     info.url = `./image/middle/${num}.png`
                 }
@@ -91,14 +134,14 @@
                         info.url = `./image/lottery-time/a.png`
                     }
                 }
-                
+
                 //绘制顶部中奖号码
-                if(numStr.length == 5){
+                if (numStr.length == 5) {
                     info.url = `./image/top-middle/${num}.png`
                 }
 
                 //绘制倒计时秒数
-                if(numStr.length == 3){
+                if (isCountDown) {
                     info.url = `./image/count-down/${num}.png`
                 }
 
@@ -132,10 +175,11 @@
         function drawImageFuc(imgInfos, callback) {
             let newImageArr = newImageFuc(imgInfos);
             newImageArr.forEach(el => {
-                el.then(imgInfo => {
-                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1], imgInfo.width ||
+                el.then((imgInfo, callack) => {
+                    ctx.drawImage(imgInfo.img, imgInfo.position[0], imgInfo.position[1],
+                        imgInfo.width ||
                         imgInfo.img.width, imgInfo.height || imgInfo.img.height);
-                    callback()
+                    if (callback) callback()
                 })
             });
         };
