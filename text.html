@@ -9,13 +9,15 @@
     <script src="./test.js"></script>
     <style>
         body{
-            background-color: red;
+            /* background-color: red; */
         }
     </style>
 </head>
 <body>
     <script>
+       
         var a =  new LotteryTool('body',{
+            canvasPosition:{x:100,y:100},
             numStr: "0123456789",
             numDirection: 'vertical',
             numPosition: {x: 0, y: 0},
@@ -28,15 +30,6 @@
     
         roll()
         function roll(){
-            // const temp = {y:0}
-            // TweenMax.to(temp,3,{
-            //     y: -900,
-            //     onUpdate: (val)=>{
-            //         a.imageNumberInfos.forEach(numInfo => {
-            //             numInfo.position[1] -= val;
-            //         })
-            //     }
-            // })
             a.drawImage()
             requestAnimationFrame(roll)
         }
