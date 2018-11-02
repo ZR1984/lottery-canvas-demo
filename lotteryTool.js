@@ -604,7 +604,9 @@ CountDownWatch.prototype.restart = function (){
 
 CountDownWatch.prototype.start = function (){
     const {onUpdate,onComplete,delayComplete} = this
+    onUpdate && onUpdate(this.count)
     this.interval = setInterval(()=>{
+        this.count--
         onUpdate && onUpdate(this.count)
         if(this.count == 0){
             this.stop()
@@ -612,7 +614,6 @@ CountDownWatch.prototype.start = function (){
                 onComplete && onComplete(this.count)
             },delayComplete)
         }
-        this.count--
     },1000)
 
     return this;
