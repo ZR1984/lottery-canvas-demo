@@ -109,11 +109,11 @@ LotteryTool.prototype.initImgInfos = function(){
 LotteryTool.prototype.reset = function(){
     const {numObjArr} = this;
     numObjArr.forEach(numObj => {
-        numObj.isRoll = true;
-        numObj.isRender = true;
         numObj.x = numObj.originX;
         numObj.y = numObj.originY;
         numObj.imgObj = numObj.originImgObj;
+        numObj.isRoll = true;
+        numObj.isRender = true;
     })
 }
 
@@ -121,15 +121,63 @@ LotteryTool.prototype.reset = function(){
 LotteryTool.prototype.setWinner = function (winNum='0') {
     const {
         numObjArr,
+        imgLoadPromise
+    } = this;
+    Promise.all(imgLoadPromise).then(()=>{
+
+        this.stopRoll();
+        this.stopRender();
+        numObjArr.forEach(numObj => {
+            if (Object.is(numObj.name, winNum)) {
+                numObj.win()
+            }
+        });
+    })
+}
+
+LotteryTool.prototype.setX = function (num){
+    const {
+        numObjArr,
+        numStep
+    } = this;
+    numObjArr.forEach((numObj,index) => {
+        numObj.x = num + index * numStep;
+    });
+}
+
+LotteryTool.prototype.roll = function (){
+    const {
+        numObjArr,
+    } = this;
+    numObjArr.forEach(numObj => {
+        numObj.isRoll = true;
+    });
+}
+
+LotteryTool.prototype.stopRoll = function (){
+    const {
+        numObjArr,
     } = this;
     numObjArr.forEach(numObj => {
         numObj.isRoll = false;
-        numObj.isRender = false;
     });
+}
+
+LotteryTool.prototype.render = function (){
+    const {
+        numObjArr,
+    } = this;
     numObjArr.forEach(numObj => {
-        if (Object.is(numObj.name, winNum)) {
-            numObj.win()
-        }
+        numObj.isRender = true;
+    });
+}
+
+LotteryTool.prototype.stopRender = function (){
+    const {
+        numObjArr,
+    } = this;
+    numObjArr.forEach(numObj => {
+        numObj.isRender = false;
     });
 }
 
@@ -189,7 +237,7 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
             numObj.imgUrl = `./image/${numType}/a.png`
         }
 
-        imgLoadPromise.push(numObj.getImg())
+        imgLoadPromise.push(...numObj.getImg())
         numObjArr.push(numObj)
         map.set(numObj.name, numObj)
     })
@@ -213,7 +261,7 @@ LotteryTool.prototype.initNumberInfosToCol = function () {
                 numObjClone.imgUrl = `./image/${numType}/a.png`
             }
     
-            imgLoadPromise.push(numObjClone.getImg())
+            imgLoadPromise.push(...numObjClone.getImg())
             numObjArr.push(numObjClone)
             map.set(numObjClone.name, numObjClone)
         })
@@ -265,7 +313,7 @@ LotteryTool.prototype.initNumberInfosToRow = function () {
             numObj.imgUrl = `./image/${numType}/a.png`
         }
 
-        imgLoadPromise.push(numObj.getImg())
+        imgLoadPromise.push(...numObj.getImg())
         numObjArr.push(numObj)
     })
 
@@ -286,7 +334,7 @@ LotteryTool.prototype.initNumberInfosToRow = function () {
             numObjClone.imgUrl = `./image/${numType}/a.png`
         }
 
-        imgLoadPromise.push(numObjClone.getImg())
+        imgLoadPromise.push(...numObjClone.getImg())
         numObjArr.push(numObjClone)
     }
 
@@ -384,10 +432,10 @@ Num.prototype.win = function () {
     this.y = winnerPosition.y;
     nextNum.y =  winnerPosition.y + height;
 
-    setTimeout(() => {
+    // setTimeout(() => {
         prevNum.imgObj = bigSmallObj
         nextNum.imgObj = oddEvenObj
-    }, 1000);
+    // }, 0);
 
 }
 
@@ -444,7 +492,9 @@ Num.prototype.getImg = function () {
         bigSmallUrl
     } = this;
 
-    new Promise(function (resolve, reject) {
+    const promiseArr = []
+
+    oddEvenUrl && promiseArr.push(new Promise(function (resolve, reject) {
         let obj = new Image();
         obj.src = oddEvenUrl;
         obj.onload = () => {
@@ -452,9 +502,9 @@ Num.prototype.getImg = function () {
         }
     }).then(data => {
         this.oddEvenObj = data;
-    })
+    }))
 
-    new Promise(function (resolve, reject) {
+    bigSmallUrl && promiseArr.push(new Promise(function (resolve, reject) {
         let obj = new Image();
         obj.src = bigSmallUrl;
         obj.onload = () => {
@@ -462,9 +512,9 @@ Num.prototype.getImg = function () {
         }
     }).then(data => {
         this.bigSmallObj = data;
-    })
+    }))
 
-    return new Promise(function (resolve, reject) {
+    promiseArr.push(new Promise(function (resolve, reject) {
         let obj = new Image();
         obj.src = imgUrl;
         obj.onload = () => {
@@ -473,7 +523,9 @@ Num.prototype.getImg = function () {
     }).then(data => {
         this.imgObj = data;
         this.originImgObj = data;
-    })
+    }))
+
+    return promiseArr
 }
 
 function Img(url,opts={}){
@@ -526,7 +578,7 @@ Img.prototype.draw = function () {
         canvasContext.drawImage(imgObj, x, y, width || imgObj.width, height || imgObj.height);
 }
 
-function CountDownWatch (count,opts = {}){
+function CountDownWatch (count = 0,opts = {}){
     const {
         onUpdate = null,
         onComplete = null,
@@ -540,6 +592,11 @@ function CountDownWatch (count,opts = {}){
     this.delayComplete = delayComplete;
 }
 
+CountDownWatch.prototype.setCount = function(countNum){
+    this.count = countNum;
+    this.originCount = countNum;
+}
+
 CountDownWatch.prototype.restart = function (){
     this.count = this.originCount;
     this.start()
@@ -548,11 +605,11 @@ CountDownWatch.prototype.restart = function (){
 CountDownWatch.prototype.start = function (){
     const {onUpdate,onComplete,delayComplete} = this
     this.interval = setInterval(()=>{
-        onUpdate(this.count)
+        onUpdate && onUpdate(this.count)
         if(this.count == 0){
             this.stop()
             setTimeout(()=>{
-                onComplete(this.count)
+                onComplete && onComplete(this.count)
             },delayComplete)
         }
         this.count--
